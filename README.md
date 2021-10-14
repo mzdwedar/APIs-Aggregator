@@ -4,10 +4,10 @@
 \n FastAPI
 \n Python 3.9
 
-#To Run:
+# To Run:
 uvicorn main:app -reload
 
-#Routes
+# Routes
 /news
 -> list the news from (newsAPI and redditAPI)
 
