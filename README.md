@@ -1,5 +1,13 @@
 # APIs-Aggregator
 
+#Requirements
+\n FastAPI
+\n Python 3.9
+
+#To Run:
+uvicorn main:app -reload
+
+#Routes
 /news
 -> list the news from (newsAPI and redditAPI)
 
