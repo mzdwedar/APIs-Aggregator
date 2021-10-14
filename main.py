@@ -80,20 +80,26 @@ def newsAPI(q:str = None):
 async def breaking_news(query:Optional[str] = Query(None)):
     NotCalled = True
 
-    if ((query != None) and (query not in cache)):
-        news_api = newsAPI(q=query)
-        reddit_api = redditAPI(q=query)
+    if (query != None): 
+        if (query not in cache):
+            news_api = newsAPI(q=query)
+            reddit_api = redditAPI(q=query)
 
-        cache[query] = list(itertools.chain(news_api, reddit_api))
+            cache[query] = list(itertools.chain(news_api, reddit_api))
 
-        return json.dumps(cache[query])
+            return json.dumps(cache[query])
+        
+        elif (query in cache):
+            return json.dumps(cache[query])
     
 
-    if ((query == None) and (NotCalled)):
-        news_api = newsAPI(q=query)
-        reddit_api = redditAPI(q=query)
-        cache['list'] = list(itertools.chain(news_api, reddit_api))
-        NotCalled = False
+    if (query == None):
+        if (NotCalled):
+            news_api = newsAPI(q=query)
+            reddit_api = redditAPI(q=query)
+            cache['list'] = list(itertools.chain(news_api, reddit_api))
+            NotCalled = False
+            return json.dumps(cache['list'])
 
-    return json.dumps(cache['list'])
+        return json.dumps(cache['list'])
    
