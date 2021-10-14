@@ -14,7 +14,6 @@ import json
 
 app = FastAPI()
 
-
 def redditAPI(q:str = None):
     auth = requests.auth.HTTPBasicAuth(reddit_api['public key'], reddit_api['secret'])
 
@@ -41,12 +40,11 @@ def redditAPI(q:str = None):
                     headers=headers, params={'limit':'100'})
 
     if (res.status_code == 200):
-
         res = res.json()['data']['children']
         news_list = []
-
         for item in res:
             news_list.append({'headline': item['data']['title'], 'link': item['data']['url'], 'source':"reddit"})
+        
         return news_list
 
     else:
