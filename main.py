@@ -6,6 +6,7 @@ from pydantic import BaseModel
 import uvicorn
 
 from const import news_api, reddit_api
+from functools import lru_cache
 import requests
 import requests.auth
 
@@ -13,9 +14,6 @@ import itertools
 import json
 
 app = FastAPI()
-
-cache = dict()
-
 
 
 def redditAPI(q:str = None):
@@ -75,30 +73,14 @@ def newsAPI(q:str = None):
     else:
         return list()
 
+@lru_cache(maxsize=40)
+def aggregate(query):
+    news_api = newsAPI(q=query)
+    reddit_api = redditAPI(q=query)
+
+    return json.dumps(list(itertools.chain(news_api, reddit_api)))
 
 @app.get('/news')
 async def breaking_news(query:Optional[str] = Query(None)):
-    NotCalled = True
-
-    if (query != None): 
-        if (query not in cache):
-            news_api = newsAPI(q=query)
-            reddit_api = redditAPI(q=query)
-
-            cache[query] = list(itertools.chain(news_api, reddit_api))
-
-            return json.dumps(cache[query])
-        
-        return json.dumps(cache[query])
-    
-
-    if (query == None):
-        if (NotCalled):
-            news_api = newsAPI(q=query)
-            reddit_api = redditAPI(q=query)
-            cache['list'] = list(itertools.chain(news_api, reddit_api))
-            NotCalled = False
-            return json.dumps(cache['list'])
-
-        return json.dumps(cache['list'])
+    return aggregate(query)
    
