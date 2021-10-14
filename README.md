@@ -1,8 +1,8 @@
 # APIs-Aggregator
 
 ## Requirements
-FastAPI
-Python 3.9
+ FastAPI
+ Python 3.9
 
 ## To Run:
 uvicorn main:app -reload
