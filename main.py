@@ -89,8 +89,7 @@ async def breaking_news(query:Optional[str] = Query(None)):
 
             return json.dumps(cache[query])
         
-        elif (query in cache):
-            return json.dumps(cache[query])
+        return json.dumps(cache[query])
     
 
     if (query == None):
