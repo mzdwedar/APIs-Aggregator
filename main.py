@@ -14,6 +14,10 @@ import json
 
 app = FastAPI()
 
+cache = dict()
+
+
+
 def redditAPI(q:str = None):
     auth = requests.auth.HTTPBasicAuth(reddit_api['public key'], reddit_api['secret'])
 
@@ -40,17 +44,16 @@ def redditAPI(q:str = None):
                     headers=headers, params={'limit':'100'})
 
     if (res.status_code == 200):
+
         res = res.json()['data']['children']
         news_list = []
+
         for item in res:
             news_list.append({'headline': item['data']['title'], 'link': item['data']['url'], 'source':"reddit"})
-        
         return news_list
 
     else:
         return list()
-
-
 
 def newsAPI(q:str = None):
 
@@ -75,11 +78,22 @@ def newsAPI(q:str = None):
 
 @app.get('/news')
 async def breaking_news(query:Optional[str] = Query(None)):
-    news_api = newsAPI(q=query)
-    reddit_api = redditAPI(q=query)
-   
-    return json.dumps(list(itertools.chain(news_api, reddit_api)))
-   
+    NotCalled = True
 
+    if ((query != None) and (query not in cache)):
+        news_api = newsAPI(q=query)
+        reddit_api = redditAPI(q=query)
 
+        cache[query] = list(itertools.chain(news_api, reddit_api))
+
+        return json.dumps(cache[query])
     
+
+    if ((query == None) and (NotCalled)):
+        news_api = newsAPI(q=query)
+        reddit_api = redditAPI(q=query)
+        cache['list'] = list(itertools.chain(news_api, reddit_api))
+        NotCalled = False
+
+    return json.dumps(cache['list'])
+   
