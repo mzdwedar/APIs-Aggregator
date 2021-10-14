@@ -4,7 +4,7 @@
 FastAPI, Python 3.9
 
 ## To Run:
-uvicorn main:app -reload
+uvicorn main:app --reload
 
 ## Routes
 /news
